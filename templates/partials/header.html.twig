@@ -1,23 +1,32 @@
-<header class="bg-blue-700 text-white shadow-md">
+<header class="bg-gradient-to-r from-blue-700 to-blue-500 text-white shadow-md">
     <div class="container mx-auto flex items-center justify-between py-4 px-6">
-        <h1 class="text-2xl font-bold">
-            <a href="/" class="hover:text-blue-300 transition">Symfony Demo</a>
-        </h1>
-        <nav>
-            <ul class="flex space-x-6 items-center">
-                <li><a href="/" class="hover:text-blue-300 transition">Accueil</a></li>
-                <li><a href="/articles" class="hover:text-blue-300 transition">Articles</a></li>
+        <!-- Left: Logo/Title -->
+        <div class="flex-shrink-0">
+            <a href="/" class="text-2xl font-bold hover:text-blue-200 transition">Symfony</a>
+        </div>
+        <!-- Center: Navigation -->
+        <nav class="flex-1 flex justify-center">
+            <ul class="flex space-x-6">
+                <li><a href="/" class="hover:text-blue-200 transition font-medium">Accueil</a></li>
+                <li><a href="/articles" class="hover:text-blue-200 transition font-medium">Articles</a></li>
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    <li><a href="/admin" class="hover:text-yellow-300 transition font-medium">Admin</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <!-- Right: Account links -->
+        <nav class="flex-shrink-0">
+            <ul class="flex space-x-4 items-center">
                 {% if app.user %}
-                    <li class="text-sm text-blue-200">{{ app.user.email }}</li>
                     <li>
-                        <a href="{{ path('app_logout') }}" class="hover:text-blue-300 transition">Déconnexion</a>
+                        <a href="{{ path('app_logout') }}" class="hover:text-blue-200 transition font-medium">Déconnexion</a>
                     </li>
                 {% else %}
                     <li>
-                        <a href="{{ path('app_login') }}" class="hover:text-blue-300 transition">Connexion</a>
+                        <a href="{{ path('app_login') }}" class="hover:text-blue-200 transition font-medium">Connexion</a>
                     </li>
                     <li>
-                        <a href="{{ path('app_register') }}" class="hover:text-blue-300 transition">Inscription</a>
+                        <a href="{{ path('app_register') }}" class="hover:text-blue-200 transition font-medium">Inscription</a>
                     </li>
                 {% endif %}
             </ul>
