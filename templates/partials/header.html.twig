@@ -1,0 +1,26 @@
+<header class="bg-blue-700 text-white shadow-md">
+    <div class="container mx-auto flex items-center justify-between py-4 px-6">
+        <h1 class="text-2xl font-bold">
+            <a href="/" class="hover:text-blue-300 transition">Symfony Demo</a>
+        </h1>
+        <nav>
+            <ul class="flex space-x-6 items-center">
+                <li><a href="/" class="hover:text-blue-300 transition">Accueil</a></li>
+                <li><a href="/articles" class="hover:text-blue-300 transition">Articles</a></li>
+                {% if app.user %}
+                    <li class="text-sm text-blue-200">{{ app.user.email }}</li>
+                    <li>
+                        <a href="{{ path('app_logout') }}" class="hover:text-blue-300 transition">Déconnexion</a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ path('app_login') }}" class="hover:text-blue-300 transition">Connexion</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_register') }}" class="hover:text-blue-300 transition">Inscription</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>
