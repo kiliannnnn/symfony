@@ -8,7 +8,8 @@
         <nav class="flex-1 flex justify-center">
             <ul class="flex space-x-6">
                 <li><a href="/" class="hover:text-blue-200 transition font-medium">Accueil</a></li>
-                <li><a href="/articles" class="hover:text-blue-200 transition font-medium">Articles</a></li>
+                <li><a href="{{ path('article_list') }}" class="hover:text-blue-200 transition font-medium">Articles</a></li>
+                <li><a href="{{ path('contact') }}" class="hover:text-blue-200 transition font-medium">Contact</a></li>
                 {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                     <li><a href="/admin" class="hover:text-yellow-300 transition font-medium">Admin</a></li>
                 {% endif %}
@@ -19,7 +20,8 @@
             <ul class="flex space-x-4 items-center">
                 {% if app.user %}
                     <li>
-                        <a href="{{ path('app_logout') }}" class="hover:text-blue-200 transition font-medium">Déconnexion</a>
+                        {# go to a small controller that stores the referer then redirects to the firewall logout path #}
+                        <a href="{{ path('app_prelogout') }}" class="hover:text-blue-200 transition font-medium">Déconnexion</a>
                     </li>
                 {% else %}
                     <li>

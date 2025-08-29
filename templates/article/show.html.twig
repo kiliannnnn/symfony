@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }} - Mon site Symfony{% endblock %}
+
+{% block content %}
+    <article class="max-w-3xl mx-auto bg-white shadow p-6 rounded">
+        {% if article.cover %}
+            <img src="{{ asset('uploads/articles/' ~ article.cover) }}" alt="{{ article.title }}" class="w-full h-64 object-cover mb-4 rounded">
+        {% endif %}
+        <h1 class="text-3xl font-bold mb-2">{{ article.title }}</h1>
+        <div class="text-sm text-gray-600 mb-4">Publié le {{ article.createdAt|date('d/m/Y H:i') }}</div>
+        <div class="prose max-w-none">{{ article.content|raw }}</div>
+
+        <nav class="mt-6 flex justify-between">
+            <div>
+                {% if prevArticle %}
+                    <a href="{{ path('article_show', {'slug': prevArticle.slug}) }}" class="text-blue-600">&larr; {{ prevArticle.title }}</a>
+                {% endif %}
+            </div>
+            <div>
+                {% if nextArticle %}
+                    <a href="{{ path('article_show', {'slug': nextArticle.slug}) }}" class="text-blue-600">{{ nextArticle.title }} &rarr;</a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <section class="mt-8">
+            <h2 class="text-xl font-semibold mb-2">Commentaires</h2>
+
+            {% if not app.user %}
+                <p>Vous devez <a href="{{ path('app_login') }}">vous connecter</a> pour publier un commentaire.</p>
+            {% else %}
+                {{ form_start(commentForm) }}
+                    {{ form_widget(commentForm.content, {'attr': {'class': 'w-full border rounded px-3 py-2'}}) }}
+                    <div class="mt-2 text-right">
+                        <button class="bg-green-600 text-white px-4 py-2 rounded">Publier</button>
+                    </div>
+                {{ form_end(commentForm) }}
+            {% endif %}
+
+            <div class="mt-6 space-y-4">
+                {% for comment in article.comments %}
+                    {% if comment.isPublished %}
+                        <div class="border rounded p-3">
+                            <div class="text-sm text-gray-600">{{ comment.author ? comment.author.email : 'Anonyme' }} — {{ comment.createdAt|date('d/m/Y H:i') }}</div>
+                            <div class="mt-2">{{ comment.content }}</div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p>Aucun commentaire pour le moment.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </article>
+{% endblock %}

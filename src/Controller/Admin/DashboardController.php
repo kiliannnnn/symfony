@@ -25,8 +25,28 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+        // public site link
+        yield MenuItem::linkToUrl('Voir le site', 'fas fa-external-link-alt', $this->generateUrl('home'));
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class);
-        yield MenuItem::linkToCrud('Articles', 'fas fa-newspaper', \App\Entity\Article::class);
-        yield MenuItem::linkToCrud('Commentaires', 'fas fa-comments', \App\Entity\Comment::class);
+
+        // Articles submenu: list + create (frontend)
+        yield MenuItem::subMenu('Articles', 'fas fa-newspaper')->setSubItems([
+            MenuItem::linkToCrud('Gérer les articles', 'fas fa-list', \App\Entity\Article::class),
+            MenuItem::linkToRoute('Créer un article', 'fas fa-plus', 'article_new'),
+        ]);
+
+        // Comments with badge for unpublished
+        $unpublishedCount = 0;
+        try {
+            $unpublishedCount = $this->getDoctrine()->getRepository(\App\Entity\Comment::class)->count(['isPublished' => false]);
+        } catch (\Throwable $e) {
+            // ignore if repository unavailable
+        }
+
+        $commentItem = MenuItem::linkToCrud('Commentaires', 'fas fa-comments', \App\Entity\Comment::class);
+        if ($unpublishedCount > 0) {
+            $commentItem = $commentItem->setBadge((string) $unpublishedCount)->setBadgePriority('danger');
+        }
+        yield $commentItem;
     }
 }

@@ -3,16 +3,55 @@
 {% block title %}Liste des articles{% endblock %}
 
 {% block content %}
-    <h2>Articles</h2>
-    <ul>
-        {% for article in articles %}
-            <li>
-                <strong>{{ article.title }}</strong><br>
-                {{ article.content }}<br>
-                <em>Publié le {{ article.createdAt|date('d/m/Y H:i') }}</em>
-            </li>
-        {% else %}
-            <li>Aucun article trouvé.</li>
-        {% endfor %}
-    </ul>
+    <div class="max-w-5xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Articles</h2>
+            <form method="get" class="flex">
+                <input type="search" name="q" value="{{ app.request.get('q') }}" placeholder="Recherche..." class="border rounded px-3 py-2" />
+                <button class="ml-2 bg-blue-600 text-white px-3 py-2 rounded">Rechercher</button>
+            </form>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            {% for article in articles %}
+                {% if article.slug %}
+                    <a href="{{ path('article_show', {'slug': article.slug}) }}" class="block bg-white shadow rounded overflow-hidden hover:shadow-lg transition">
+                        {% if article.cover %}
+                            <img src="{{ asset('uploads/articles/' ~ article.cover) }}" alt="{{ article.title }}" class="w-full h-40 object-cover">
+                        {% endif %}
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-blue-600">{{ article.title }}</h3>
+                            <div class="text-sm text-gray-600 mb-2">{{ article.createdAt|date('d/m/Y') }}</div>
+                            <p class="text-gray-800">{{ article.content|striptags|split(" ")|slice(0,30)|join(' ') ~ '…' }}</p>
+                        </div>
+                    </a>
+                {% else %}
+                    <article class="bg-white shadow rounded overflow-hidden">
+                        {% if article.cover %}
+                            <img src="{{ asset(article.cover) }}" alt="{{ article.title }}" class="w-full h-40 object-cover">
+                        {% endif %}
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold">{{ article.title }}</h3>
+                            <div class="text-sm text-gray-600 mb-2">{{ article.createdAt|date('d/m/Y') }}</div>
+                            <p class="text-gray-800">{{ article.content|striptags|split(" ")|slice(0,30)|join(' ') ~ '…' }}</p>
+                        </div>
+                    </article>
+                {% endif %}
+            {% else %}
+                <p>Aucun article trouvé.</p>
+            {% endfor %}
+        </div>
+
+        <div class="mt-6 flex justify-center items-center space-x-4">
+            {% if page > 1 %}
+                <a href="?page={{ page - 1 }}{% if app.request.get('q') %}&q={{ app.request.get('q') }}{% endif %}" class="px-3 py-2 bg-gray-200 rounded">&larr; Précédent</a>
+            {% endif %}
+
+            <span>Page {{ page }} / {{ totalPages }}</span>
+
+            {% if page < totalPages %}
+                <a href="?page={{ page + 1 }}{% if app.request.get('q') %}&q={{ app.request.get('q') }}{% endif %}" class="px-3 py-2 bg-gray-200 rounded">Suivant &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

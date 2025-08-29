@@ -23,8 +23,8 @@ security:
                 username_parameter: _email
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
+                # static post-logout route; we store the real referer in session before hitting logout
+                target: app_logout_after
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall

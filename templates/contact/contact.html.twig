@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact - Mon site Symfony{% endblock %}
+
+{% block content %}
+    <div class="max-w-2xl mx-auto bg-white shadow p-6 rounded">
+        <h1 class="text-2xl font-bold mb-4">Contact</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-4 p-3 rounded bg-green-100 text-green-800">{{ message }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        {{ form_start(form) }}
+            <div class="mb-4">
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, {'attr': {'class': 'w-full border rounded px-3 py-2'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'w-full border rounded px-3 py-2'}}) }}
+                {{ form_errors(form.email) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.subject) }}
+                {{ form_widget(form.subject, {'attr': {'class': 'w-full border rounded px-3 py-2'}}) }}
+                {{ form_errors(form.subject) }}
+            </div>
+
+            <div class="mb-4">
+                {{ form_label(form.message) }}
+                {{ form_widget(form.message, {'attr': {'class': 'w-full border rounded px-3 py-2'}}) }}
+                {{ form_errors(form.message) }}
+            </div>
+
+            <div class="text-right">
+                <button class="bg-blue-600 text-white px-4 py-2 rounded">Envoyer</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -14,85 +14,60 @@ class Comment
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?\App\Entity\User $author = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $catch = null;
-
-    #[ORM\Column(type: Types::ARRAY)]
-    private array $categories = [];
-
-    #[ORM\Column(length: 255)]
-    private ?string $cover = null;
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Article::class, inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private ?\App\Entity\Article $article = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    private bool $isPublished = false;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getContent(): ?string
     {
-        return $this->title;
+        return $this->content;
     }
 
-    public function setTitle(string $title): static
+    public function setContent(string $content): static
     {
-        $this->title = $title;
+        $this->content = $content;
 
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getAuthor(): ?\App\Entity\User
     {
-        return $this->slug;
+        return $this->author;
     }
 
-    public function setSlug(string $slug): static
+    public function setAuthor(?\App\Entity\User $author): static
     {
-        $this->slug = $slug;
+        $this->author = $author;
 
         return $this;
     }
 
-    public function getCatch(): ?string
+    public function getArticle(): ?\App\Entity\Article
     {
-        return $this->catch;
+        return $this->article;
     }
 
-    public function setCatch(string $catch): static
+    public function setArticle(?\App\Entity\Article $article): static
     {
-        $this->catch = $catch;
-
-        return $this;
-    }
-
-    public function getCategories(): array
-    {
-        return $this->categories;
-    }
-
-    public function setCategories(array $categories): static
-    {
-        $this->categories = $categories;
-
-        return $this;
-    }
-
-    public function getCover(): ?string
-    {
-        return $this->cover;
-    }
-
-    public function setCover(string $cover): static
-    {
-        $this->cover = $cover;
+        $this->article = $article;
 
         return $this;
     }
@@ -105,6 +80,18 @@ class Comment
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->isPublished;
+    }
+
+    public function setIsPublished(bool $isPublished): static
+    {
+        $this->isPublished = $isPublished;
 
         return $this;
     }
