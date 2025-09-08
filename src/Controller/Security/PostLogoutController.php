@@ -22,7 +22,6 @@ class PostLogoutController extends AbstractController
             return $response;
         }
 
-        return $this->redirectToRoute('app_home');
+    return $this->redirectToRoute('home');
     }
 }
-
