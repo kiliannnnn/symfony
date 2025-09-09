@@ -33,6 +33,7 @@ class CommentCrudController extends AbstractCrudController
         return [
             IdField::new('id')->onlyOnIndex(),
             AssociationField::new('article')
+                ->setCrudController(\App\Controller\Admin\ArticleCrudController::class)
                 ->setFormTypeOptions(['choice_label' => 'title'])
                 ->formatValue(function ($value) {
                     if ($value instanceof \App\Entity\Article) {
@@ -41,7 +42,6 @@ class CommentCrudController extends AbstractCrudController
                     return (string) $value;
                 }),
             AssociationField::new('author'),
-            // Truncated preview on index
             TextField::new('content')
                 ->onlyOnIndex()
                 ->formatValue(function ($value) {
@@ -51,7 +51,6 @@ class CommentCrudController extends AbstractCrudController
                     }
                     return $text;
                 }),
-            // Full content on detail
             TextEditorField::new('content')->onlyOnDetail(),
             DateTimeField::new('createdAt')->onlyOnIndex(),
             BooleanField::new('isPublished'),
@@ -60,17 +59,12 @@ class CommentCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        // Approve action (visible when comment is not published)
         $approve = Action::new('approve', 'Approuver')
             ->linkToCrudAction('approve')
             ->setHtmlAttributes(['onclick' => "return confirm('Approuver ce commentaire ?');"]); 
-
-        // Hide action (visible when comment is published)
         $hide = Action::new('hide', 'Masquer')
             ->linkToCrudAction('hide')
             ->setHtmlAttributes(['onclick' => "return confirm('Masquer ce commentaire ?');"]); 
-
-        // Update existing Delete action to show a confirmation dialog
         return $actions
             ->add(Crud::PAGE_INDEX, $approve)
             ->add(Crud::PAGE_INDEX, $hide)
@@ -78,9 +72,6 @@ class CommentCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setLabel('Éditer'));
     }
 
-    /**
-     * Toggle publish status for a comment
-     */
     protected function resolveCommentFromContextOrRequest(AdminContext $context, EntityManagerInterface $em): ?Comment
     {
         $comment = null;

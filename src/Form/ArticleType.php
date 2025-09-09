@@ -10,6 +10,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Category;
+use App\Entity\Tag;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ArticleType extends AbstractType
@@ -45,6 +48,19 @@ class ArticleType extends AbstractType
                 // not mapped to the entity, rely on 'mapped' => false only
                 'choices' => $options['existing_choices'] ?? [],
                 'placeholder' => 'Aucune',
+            ])
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'placeholder' => 'Aucune',
+            ])
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'required' => false,
             ])
         ;
     }

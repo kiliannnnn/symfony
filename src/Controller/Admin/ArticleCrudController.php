@@ -12,6 +12,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use App\Entity\Category;
+use App\Entity\Tag;
+use App\Controller\Admin\CategoryCrudController;
+use App\Controller\Admin\TagCrudController;
 
 class ArticleCrudController extends AbstractCrudController
 {
@@ -23,23 +29,21 @@ class ArticleCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         $available = $this->getAvailableCovers();
-        // ensure we pass an array to setChoices
         $choices = $available ? array_combine($available, $available) : [];
 
         return [
             IdField::new('id')->onlyOnIndex(),
             TextField::new('title'),
-            TextField::new('slug')->onlyOnIndex(),
-            DateTimeField::new('createdAt')->onlyOnIndex(),
-            // show a preview on the index
-            ImageField::new('cover')->setBasePath('/uploads/articles')->onlyOnIndex(),
+            TextField::new('slug'),
+            DateTimeField::new('createdAt')->hideOnForm(),
+            ImageField::new('cover')->setBasePath('/uploads/articles')->hideOnForm(),
             TextareaField::new('content')->hideOnIndex(),
-            // Vich image upload field for forms (property on the entity is coverFile)
             TextField::new('coverFile')->setFormType(VichImageType::class)->onlyOnForms(),
-            // Allow selecting an existing uploaded cover when editing/creating
             ChoiceField::new('cover')
                 ->setChoices($choices)
                 ->onlyOnForms(),
+            AssociationField::new('category')->setCrudController(CategoryCrudController::class),
+            AssociationField::new('tags')->setCrudController(TagCrudController::class)->setFormTypeOptions(['by_reference' => false]),
         ];
     }
 

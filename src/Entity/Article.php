@@ -38,6 +38,16 @@ class Article
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Category::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?\App\Entity\Category $category = null;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\Tag::class, inversedBy: 'articles')]
+    private $tags;
+
     /**
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Comment>
      */
@@ -47,6 +57,43 @@ class Article
     public function __construct()
     {
         $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tags = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public function getCategory(): ?\App\Entity\Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?\App\Entity\Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection<int, \App\Entity\Tag>
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    public function addTag(\App\Entity\Tag $tag): static
+    {
+        if (! $this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(\App\Entity\Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
     }
 
     public function getId(): ?int

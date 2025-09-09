@@ -74,6 +74,24 @@ class ArticleController extends AbstractController
                ->setParameter('q', '%'.$q.'%');
         }
 
+        // filter by category slug
+        if ($category = $request->query->get('category')) {
+            $qb->join('a.category', 'c')
+               ->andWhere('c.slug = :category')
+               ->setParameter('category', $category);
+        }
+
+        // filter by tag slug
+        if ($tag = $request->query->get('tag')) {
+            $qb->join('a.tags', 't')
+               ->andWhere('t.slug = :tag')
+               ->setParameter('tag', $tag);
+        } elseif ($tagId = $request->query->get('tagId')) {
+            $qb->join('a.tags', 't')
+               ->andWhere('t.id = :tagId')
+               ->setParameter('tagId', $tagId);
+        }
+
         // count total
     $countQb = clone $qb;
     // Remove ordering from count query to avoid Postgres grouping error

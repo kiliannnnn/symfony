@@ -25,22 +25,21 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // public site link
         yield MenuItem::linkToUrl('Voir le site', 'fas fa-external-link-alt', $this->generateUrl('home'));
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', \App\Entity\User::class);
-
-        // Articles submenu: list + create (frontend)
         yield MenuItem::subMenu('Articles', 'fas fa-newspaper')->setSubItems([
             MenuItem::linkToCrud('Gérer les articles', 'fas fa-list', \App\Entity\Article::class),
             MenuItem::linkToRoute('Créer un article', 'fas fa-plus', 'article_new'),
         ]);
 
-        // Comments with badge for unpublished
+    yield MenuItem::linkToCrud('Catégories', 'fas fa-folder', \App\Entity\Category::class);
+    yield MenuItem::linkToCrud('Tags', 'fas fa-tags', \App\Entity\Tag::class);
+
         $unpublishedCount = 0;
         try {
             $unpublishedCount = $this->getDoctrine()->getRepository(\App\Entity\Comment::class)->count(['isPublished' => false]);
         } catch (\Throwable $e) {
-            // ignore if repository unavailable
+            // ignore
         }
 
         $commentItem = MenuItem::linkToCrud('Commentaires', 'fas fa-comments', \App\Entity\Comment::class);
